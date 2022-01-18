@@ -23,16 +23,20 @@ export class World {
   }
 
   get(x: number, y: number) {
-    return this.space[x + y * this.width];
+    return this.space[this.getIndex(x, y)];
   }
 
   set(x: number, y: number, value: number) {
-    this.space[x + y * this.width] = value;
+    this.space[this.getIndex(x, y)] = value;
   }
 
   destroy() {
     this.renderer.stop();
     this.renderer.remove();
+  }
+
+  private getIndex(x: number, y: number) {
+    return x + y * this.width;
   }
 
   private createEntity(entity: Entity) {
