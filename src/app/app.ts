@@ -1,12 +1,16 @@
 import { LangtonAnt } from './entity';
+import { Renderer } from './renderer';
 import { World } from './world';
+import '../style.css';
 
 class View {
   static interval = 0;
   static world: World;
+  static renderer: Renderer;
 
   static init() {
-    View.world = new World(250, 180);
+    View.renderer = new Renderer({ cellSize: 5 });
+    View.world = new World(300, 150, View.renderer);
   }
 
   static start() {
@@ -35,8 +39,8 @@ class View {
 }
 
 View.init();
-View.world.renderer.onClick(cell => {
-  View.world.createCell(LangtonAnt, cell);
+View.renderer.onClick(cell => {
+  View.world.createEntity(LangtonAnt, cell);
 });
 
 document.querySelectorAll('button').forEach(button => {

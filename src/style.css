@@ -1,11 +1,13 @@
-body {
-    padding: 0;
-    margin: 0;
-    display: flex;
-    flex-direction: column;
-}
-
 .actions {
     display: flex;
-    margin-bottom: 16px;
+}
+
+button {
+    border: 0;
+    background: #999;
+    border-radius: 0;
+    padding: 8px;
+    color: #fff;
+    cursor: pointer;
+    margin: 8px;
 }

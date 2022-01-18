@@ -1,6 +1,10 @@
 import { Point } from './models';
 import { World } from './world';
 
+interface RenderConfig {
+  cellSize?: number;
+}
+
 export class Renderer {
   private context: CanvasRenderingContext2D | null = null;
   private canvas: HTMLCanvasElement | null = null;
@@ -8,12 +12,12 @@ export class Renderer {
     width: 5,
     height: 5
   };
+  private world!: World;
   private readonly clickHandlers: ((position: Point) => void)[] = [];
   private started = true;
 
-  constructor(private readonly world: World) {
-    this.initCanvas(world);
-    this.drawFrame();
+  constructor(config: RenderConfig) {
+    this.cell.width = this.cell.height = config.cellSize || 5;
   }
 
   start() {
@@ -24,17 +28,27 @@ export class Renderer {
     this.started = false;
   }
 
-  drawFrame() {
+  renderFrame() {
     requestAnimationFrame(() => {
       if (!this.context) {
         return;
       }
-      const world = this.world;
 
-      this.context.clearRect(0, 0, world.width * this.cell.width, world.height * this.cell.height);
+      const world = this.world;
 
       for (let x = 0; x < world.width; x++) {
         for (let y = 0; y < world.width; y++) {
+          if (!this.world.changed(x, y)) {
+            continue;
+          }
+          this.context.fillStyle = '#fff';
+          this.context.strokeStyle = '#999';
+          this.context.fillRect(
+            this.cell.width * x,
+            this.cell.height * y,
+            this.cell.width,
+            this.cell.height
+          );
           this.context.strokeRect(
             this.cell.width * x,
             this.cell.height * y,
@@ -67,7 +81,7 @@ export class Renderer {
       });
 
       if (this.started) {
-        this.drawFrame();
+        this.renderFrame();
       }
     });
   }
@@ -80,7 +94,8 @@ export class Renderer {
     this.canvas?.remove();
   }
 
-  private initCanvas(world: World) {
+  init(world: World) {
+    this.world = world;
     this.canvas = document.createElement('canvas');
     this.canvas.width = world.width * this.cell.width;
     this.canvas.height = world.height * this.cell.height;
@@ -101,6 +116,20 @@ export class Renderer {
 
     this.context.lineWidth = 1;
     this.context.strokeStyle = '#999';
+    this.context.translate(0.5, 0.5);
+
+    for (let x = 0; x < world.width; x++) {
+      for (let y = 0; y < world.width; y++) {
+        this.context.strokeRect(
+          this.cell.width * x,
+          this.cell.height * y,
+          this.cell.width,
+          this.cell.height
+        );
+      }
+    }
+
+    this.renderFrame();
   }
 
   private get(x: number, y: number) {

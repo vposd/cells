@@ -5,11 +5,11 @@ import { Renderer } from './renderer';
 export class World {
   readonly space: number[] = [];
   readonly entities: Entity[] = [];
-  readonly renderer: Renderer;
+  private readonly changedCells = new Set<number>();
 
-  constructor(readonly width: number, readonly height: number) {
+  constructor(readonly width: number, readonly height: number, readonly renderer: Renderer) {
     this.space = this.buildSpace(width, height);
-    this.renderer = new Renderer(this);
+    this.renderer.init(this);
     this.renderer.start();
   }
 
@@ -17,9 +17,9 @@ export class World {
     this.entities.forEach(e => e.tick());
   }
 
-  createCell(entityType: Type<Entity>, point: Point) {
+  createEntity(entityType: Type<Entity>, point: Point) {
     const entity = new entityType(this, point);
-    this.createEntity(entity);
+    this.add(entity);
   }
 
   get(x: number, y: number) {
@@ -27,7 +27,13 @@ export class World {
   }
 
   set(x: number, y: number, value: number) {
-    this.space[this.getIndex(x, y)] = value;
+    const index = this.getIndex(x, y);
+    this.space[index] = value;
+    this.changedCells.add(index);
+  }
+
+  changed(x: number, y: number) {
+    return this.changedCells.has(this.getIndex(x, y));
   }
 
   destroy() {
@@ -39,7 +45,7 @@ export class World {
     return x + y * this.width;
   }
 
-  private createEntity(entity: Entity) {
+  private add(entity: Entity) {
     this.entities.push(entity);
   }
 

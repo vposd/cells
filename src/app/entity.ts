@@ -23,7 +23,6 @@ export abstract class Entity {
   }
 
   protected step(steps = 1) {
-    console.log('step', this.position, this.direction);
     switch (this.direction) {
       case 0:
         this._position = new Point(this._position.x, this._position.y - steps);
