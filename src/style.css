@@ -1,0 +1,11 @@
+body {
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.actions {
+    display: flex;
+    margin-bottom: 16px;
+}
