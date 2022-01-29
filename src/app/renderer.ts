@@ -1,5 +1,6 @@
-import { Point } from './models';
-import { World } from './world';
+import { WalkableEntity } from "./entity";
+import { Point } from "./models";
+import { World } from "./world";
 
 interface RenderConfig {
   cellSize?: number;
@@ -10,7 +11,7 @@ export class Renderer {
   private canvas: HTMLCanvasElement | null = null;
   private cell = {
     width: 5,
-    height: 5
+    height: 5,
   };
   private world!: World;
   private readonly clickHandlers: ((position: Point) => void)[] = [];
@@ -38,11 +39,11 @@ export class Renderer {
 
       for (let x = 0; x < world.width; x++) {
         for (let y = 0; y < world.width; y++) {
-          if (!this.world.changed(x, y)) {
+          if (!this.world.space.changed(x, y)) {
             continue;
           }
-          this.context.fillStyle = '#fff';
-          this.context.strokeStyle = '#999';
+          this.context.fillStyle = "#fff";
+          this.context.strokeStyle = "#999";
           this.context.fillRect(
             this.cell.width * x,
             this.cell.height * y,
@@ -55,8 +56,8 @@ export class Renderer {
             this.cell.width,
             this.cell.height
           );
-          if (this.get(x, y) !== 0) {
-            this.context.fillStyle = '#1976D2';
+          if (this.world.space.getValue(x, y) === 1) {
+            this.context.fillStyle = "#1976D2";
             this.context.fillRect(
               1 + this.cell.width * x,
               1 + this.cell.height * y,
@@ -67,11 +68,11 @@ export class Renderer {
         }
       }
 
-      // world.entities.forEach(e => {
+      // world.entities.forEach((e) => {
       //   if (!this.context) {
       //     return;
       //   }
-      //   this.context.fillStyle = '#212121';
+      //   this.context.fillStyle = "#212121";
       //   this.context.fillRect(
       //     1 + this.cell.width * e.position.x,
       //     1 + this.cell.height * e.position.y,
@@ -80,9 +81,9 @@ export class Renderer {
       //   );
       // });
 
-      if (this.started) {
-        // this.renderFrame();
-      }
+      // if (this.started) {
+      //   // this.renderFrame();
+      // }
     });
   }
 
@@ -96,17 +97,22 @@ export class Renderer {
 
   init(world: World) {
     this.world = world;
-    this.canvas = document.createElement('canvas');
-    this.canvas.width = world.width * this.cell.width;
-    this.canvas.height = world.height * this.cell.height;
+    this.canvas = document.createElement("canvas");
+    this.canvas.width = world.width * this.cell.width + 1;
+    this.canvas.height = world.height * this.cell.height + 1;
     document.body.append(this.canvas);
-    this.context = this.canvas.getContext('2d');
+    this.context = this.canvas.getContext("2d");
 
-    this.canvas.addEventListener('click', (e: any) => {
+    this.canvas.addEventListener("click", (e: any) => {
       const x = e.layerX;
       const y = e.layerY;
-      this.clickHandlers.forEach(func =>
-        func(new Point(Math.floor(x / this.cell.width), Math.floor(y / this.cell.height)))
+      this.clickHandlers.forEach((func) =>
+        func(
+          new Point(
+            Math.floor(x / this.cell.width),
+            Math.floor(y / this.cell.height)
+          )
+        )
       );
     });
 
@@ -115,7 +121,7 @@ export class Renderer {
     }
 
     this.context.lineWidth = 1;
-    this.context.strokeStyle = '#999';
+    this.context.strokeStyle = "#999";
     this.context.translate(0.5, 0.5);
 
     for (let x = 0; x < world.width; x++) {
@@ -130,9 +136,5 @@ export class Renderer {
     }
 
     this.renderFrame();
-  }
-
-  private get(x: number, y: number) {
-    return this.world.space[x + y * this.world.width];
   }
 }

@@ -1,8 +1,8 @@
-import { LangtonAnt, LifeEntity } from './entity';
-import { Renderer } from './renderer';
-import { World } from './world';
-import '../style.css';
-import { Point } from './models';
+import { LangtonAnt, LifeEntity } from "./entity";
+import { Renderer } from "./renderer";
+import { World } from "./world";
+import "../style.css";
+import { Point } from "./models";
 
 class View {
   static interval = 0;
@@ -11,7 +11,13 @@ class View {
 
   static init() {
     View.renderer = new Renderer({ cellSize: 5 });
-    View.world = new World(200, 150, View.renderer);
+    View.world = new World(50, 50, View.renderer);
+
+    for (let i = 0; i < View.world.width; i++) {
+      for (let j = 0; j < View.world.width; j++) {
+        View.world.createEntity(LifeEntity, new Point(i, j));
+      }
+    }
   }
 
   static start() {
@@ -40,15 +46,18 @@ class View {
 }
 
 View.init();
-View.renderer.onClick(cell => {
-  console.log(cell);
+View.renderer.onClick((cell) => {
   View.world.set(cell.x, cell.y, 1);
+  // View.world.createEntity(LangtonAnt, cell);
   View.renderer.renderFrame();
 });
 
-document.querySelectorAll('button').forEach(button => {
-  const action = button.getAttribute('action');
+document.querySelectorAll("button").forEach((button) => {
+  const action = button.getAttribute("action");
   if (action) {
-    button.addEventListener('click', View[action as 'start' | 'stop'] as unknown as () => void);
+    button.addEventListener(
+      "click",
+      View[action as "start" | "stop"] as unknown as () => void
+    );
   }
 });

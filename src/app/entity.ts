@@ -1,5 +1,5 @@
-import { Point } from './models';
-import { World } from './world';
+import { Point } from "./models";
+import { World } from "./world";
 
 export abstract class Entity {
   get position() {
@@ -120,15 +120,17 @@ export class LifeEntity extends Entity {
   }
 
   tick() {
+    this.alive = this.world.get(this._position.x, this._position.y) === 1;
     const neighbours = this.getNeighbours();
-    const aliveNeighbours = neighbours.filter(x => x === 1);
+    const aliveNeighbours = neighbours.filter((x) => x === 1);
     const shouldBorn = aliveNeighbours.length === 3;
     if (shouldBorn) {
       return this.world.set(this.position.x, this.position.y, 1);
     }
 
     const shouldKeepLiving =
-      this.alive && (aliveNeighbours.length === 2 || aliveNeighbours.length === 3);
+      this.alive &&
+      (aliveNeighbours.length === 2 || aliveNeighbours.length === 3);
     if (!shouldKeepLiving) {
       this.alive = false;
       return this.world.set(this.position.x, this.position.y, 0);
@@ -144,7 +146,7 @@ export class LifeEntity extends Entity {
       this.world.get(this.position.x + 1, this.position.y),
       this.world.get(this.position.x - 1, this.position.y - 1),
       this.world.get(this.position.x, this.position.y - 1),
-      this.world.get(this.position.x + 1, this.position.y - 1)
+      this.world.get(this.position.x + 1, this.position.y - 1),
     ];
   }
 }
