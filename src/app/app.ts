@@ -10,14 +10,8 @@ class View {
   static renderer: Renderer;
 
   static init() {
-    View.renderer = new Renderer({ cellSize: 15 });
-    View.world = new World(30, 30, View.renderer);
-
-    for (let x = 0; x < View.world.width; x++) {
-      for (let y = 0; y < View.world.width; y++) {
-        View.world.createEntity(LifeEntity, new Point(x, y));
-      }
-    }
+    View.renderer = new Renderer({ cellSize: 5 });
+    View.world = new World(200, 150, View.renderer);
   }
 
   static start() {
