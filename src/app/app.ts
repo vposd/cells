@@ -10,7 +10,7 @@ class View {
 
   static init() {
     View.renderer = new Renderer({ cellSize: 5 });
-    View.world = new World(300, 150, View.renderer);
+    View.world = new World(200, 150, View.renderer);
   }
 
   static start() {
