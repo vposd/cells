@@ -10,7 +10,7 @@ class View {
   static renderer: Renderer;
 
   static init() {
-    View.renderer = new Renderer({ cellSize: 5 });
+    View.renderer = new Renderer({ cellSize: 15 });
     View.world = new World(50, 50, View.renderer);
 
     for (let i = 0; i < View.world.width; i++) {
@@ -47,7 +47,8 @@ class View {
 
 View.init();
 View.renderer.onClick((cell) => {
-  View.world.set(cell.x, cell.y, 1);
+  const value = View.world.space.getValue(cell.x, cell.y);
+  View.world.set(cell.x, cell.y, value ? 0 : 1);
   // View.world.createEntity(LangtonAnt, cell);
   View.renderer.renderFrame();
 });
