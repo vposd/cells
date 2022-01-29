@@ -6,13 +6,20 @@ export abstract class Entity {
     return new Point(this._position.x, this._position.y);
   }
 
-  protected _position: Point;
-  protected direction: number = 0;
   constructor(protected readonly world: World, point: Point) {
     this._position = point;
   }
 
+  protected _position: Point;
+
   abstract tick(): void;
+}
+
+export abstract class WalkableEntity extends Entity {
+  protected direction: number = 0;
+  constructor(world: World, point: Point) {
+    super(world, point);
+  }
 
   protected turnRight() {
     this.direction = (this.direction + 1) % 4;
@@ -46,7 +53,7 @@ export abstract class Entity {
   }
 }
 
-export class LangtonAnt extends Entity {
+export class LangtonAnt extends WalkableEntity {
   constructor(world: World, point: Point) {
     super(world, point);
   }
@@ -75,7 +82,7 @@ export class LangtonAnt extends Entity {
   }
 }
 
-export class OtherAnt extends Entity {
+export class OtherAnt extends WalkableEntity {
   constructor(world: World, point: Point) {
     super(world, point);
   }
@@ -101,5 +108,43 @@ export class OtherAnt extends Entity {
       this.step();
       return;
     }
+  }
+}
+
+export class LifeEntity extends Entity {
+  private alive = false;
+
+  constructor(world: World, point: Point) {
+    super(world, point);
+    this.alive = world.get(point.x, point.y) === 1;
+  }
+
+  tick() {
+    const neighbours = this.getNeighbours();
+    const aliveNeighbours = neighbours.filter(x => x === 1);
+    const shouldBorn = aliveNeighbours.length === 3;
+    if (shouldBorn) {
+      return this.world.set(this.position.x, this.position.y, 1);
+    }
+
+    const shouldKeepLiving =
+      this.alive && (aliveNeighbours.length === 2 || aliveNeighbours.length === 3);
+    if (!shouldKeepLiving) {
+      this.alive = false;
+      return this.world.set(this.position.x, this.position.y, 0);
+    }
+  }
+
+  private getNeighbours() {
+    return [
+      this.world.get(this.position.x - 1, this.position.y + 1),
+      this.world.get(this.position.x, this.position.y + 1),
+      this.world.get(this.position.x + 1, this.position.y + 1),
+      this.world.get(this.position.x - 1, this.position.y),
+      this.world.get(this.position.x + 1, this.position.y),
+      this.world.get(this.position.x - 1, this.position.y - 1),
+      this.world.get(this.position.x, this.position.y - 1),
+      this.world.get(this.position.x + 1, this.position.y - 1)
+    ];
   }
 }

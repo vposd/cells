@@ -67,21 +67,21 @@ export class Renderer {
         }
       }
 
-      world.entities.forEach(e => {
-        if (!this.context) {
-          return;
-        }
-        this.context.fillStyle = '#212121';
-        this.context.fillRect(
-          1 + this.cell.width * e.position.x,
-          1 + this.cell.height * e.position.y,
-          this.cell.width - 1,
-          this.cell.height - 1
-        );
-      });
+      // world.entities.forEach(e => {
+      //   if (!this.context) {
+      //     return;
+      //   }
+      //   this.context.fillStyle = '#212121';
+      //   this.context.fillRect(
+      //     1 + this.cell.width * e.position.x,
+      //     1 + this.cell.height * e.position.y,
+      //     this.cell.width - 1,
+      //     this.cell.height - 1
+      //   );
+      // });
 
       if (this.started) {
-        this.renderFrame();
+        // this.renderFrame();
       }
     });
   }

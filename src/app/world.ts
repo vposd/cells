@@ -1,4 +1,4 @@
-import { Entity, LangtonAnt } from './entity';
+import { Entity } from './entity';
 import { Point, Type } from './models';
 import { Renderer } from './renderer';
 
@@ -6,6 +6,7 @@ export class World {
   readonly space: number[] = [];
   readonly entities: Entity[] = [];
   private readonly changedCells = new Set<number>();
+  private temp: number[] = [];
 
   constructor(readonly width: number, readonly height: number, readonly renderer: Renderer) {
     this.space = this.buildSpace(width, height);
@@ -14,7 +15,9 @@ export class World {
   }
 
   tick() {
-    this.entities.forEach(e => e.tick());
+    this.entities.forEach(x => x.tick());
+    this.temp = [];
+    this.renderer.renderFrame();
   }
 
   createEntity(entityType: Type<Entity>, point: Point) {
@@ -28,7 +31,7 @@ export class World {
 
   set(x: number, y: number, value: number) {
     const index = this.getIndex(x, y);
-    this.space[index] = value;
+    this.temp[index] = value;
     this.changedCells.add(index);
   }
 

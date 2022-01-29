@@ -1,7 +1,8 @@
-import { LangtonAnt } from './entity';
+import { LangtonAnt, LifeEntity } from './entity';
 import { Renderer } from './renderer';
 import { World } from './world';
 import '../style.css';
+import { Point } from './models';
 
 class View {
   static interval = 0;
@@ -9,8 +10,14 @@ class View {
   static renderer: Renderer;
 
   static init() {
-    View.renderer = new Renderer({ cellSize: 5 });
-    View.world = new World(300, 150, View.renderer);
+    View.renderer = new Renderer({ cellSize: 15 });
+    View.world = new World(30, 30, View.renderer);
+
+    for (let x = 0; x < View.world.width; x++) {
+      for (let y = 0; y < View.world.width; y++) {
+        View.world.createEntity(LifeEntity, new Point(x, y));
+      }
+    }
   }
 
   static start() {
@@ -40,7 +47,9 @@ class View {
 
 View.init();
 View.renderer.onClick(cell => {
-  View.world.createEntity(LangtonAnt, cell);
+  console.log(cell);
+  View.world.set(cell.x, cell.y, 1);
+  View.renderer.renderFrame();
 });
 
 document.querySelectorAll('button').forEach(button => {
